@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ShopSync Dashboard - Violet Edition</title>
+  <style>
+    :root {
+      --bg-dark: #121212;
+      --violet: #8e44ad;
+      --violet-light: #a569bd;
+      --text-light: #f2f2f2;
+      --card-bg: #1e1e1e;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+    }
+
+    header {
+      background: var(--violet);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .toggle-btn {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--text-light);
+      padding: 0.5rem 1rem;
+      color: var(--text-light);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .toggle-btn:hover {
+      background-color: var(--violet-light);
+      color: var(--bg-dark);
+    }
+
+    .container {
+      display: flex;
+      height: calc(100vh - 80px);
+    }
+
+    .sidebar {
+      width: 240px;
+      background-color: #1b1b1b;
+      padding: 1.5rem;
+    }
+
+    .sidebar h2 {
+      margin-bottom: 1rem;
+      color: var(--violet-light);
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar li {
+      margin: 1rem 0;
+      cursor: pointer;
+      padding: 0.4rem;
+      transition: 0.3s;
+    }
+
+    .sidebar li:hover {
+      background-color: var(--violet-light);
+      color: var(--bg-dark);
+      border-radius: 5px;
+    }
+
+    .main {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      margin-bottom: 2rem;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.01);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    }
+
+    canvas {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        display: flex;
+        overflow-x: auto;
+      }
+      .sidebar ul {
+        display: flex;
+      }
+      .sidebar li {
+        margin-right: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>ShopSync ⚡ Violet</h1>
+  <button class="toggle-btn" onclick="toggleRole()">Switch to Customer</button>
+</header>
+
+<div class="container">
+  <div class="sidebar">
+    <div>
+      <h2 id="roleTitle">Vendor Panel</h2>
+      <ul id="menu">
+        <li>📦 Manage Products</li>
+        <li>📊 Sales Analytics</li>
+        <li>📬 Orders</li>
+        <li>💬 Messages</li>
+        <li>🔔 Notifications</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="card">
+      <h3 id="dashboardTitle">Vendor Sales Overview</h3>
+      <canvas id="chartCanvas"></canvas>
+    </div>
+
+    <div class="card">
+      <h4>📨 Recent Activity</h4>
+      <p>🟢 Customer *John* messaged about pricing.</p>
+      <p>🟣 Stock alert: Wireless Keyboard low!</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentRole = "vendor";
+
+  function toggleRole() {
+    currentRole = currentRole === "vendor" ? "customer" : "vendor";
+    document.getElementById("roleTitle").innerText = currentRole === "vendor" ? "Vendor Panel" : "Customer Panel";
+    document.querySelector(".toggle-btn").innerText = currentRole === "vendor" ? "Switch to Customer" : "Switch to Vendor";
+    document.getElementById("dashboardTitle").innerText = currentRole === "vendor" ? "Vendor Sales Overview" : "Customer Order Summary";
+
+    const menu = document.getElementById("menu");
+    menu.innerHTML = "";
+
+    if (currentRole === "vendor") {
+      menu.innerHTML = `
+        <li>📦 Manage Products</li>
+        <li>📊 Sales Analytics</li>
+        <li>📬 Orders</li>
+        <li>💬 Messages</li>
+        <li>🔔 Notifications</li>
+      `;
+    } else {
+      menu.innerHTML = `
+        <li>🛍️ Browse Products</li>
+        <li>📦 My Orders</li>
+        <li>💬 Chat with Vendors</li>
+        <li>❤️ Wishlist</li>
+        <li>🔔 Alerts</li>
+      `;
+    }
+
+    drawChart();
+  }
+
+  function drawChart() {
+    const canvas = document.getElementById("chartCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.height = 200;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw bars
+    const data = currentRole === "vendor" ? [100, 60, 90, 50, 120] : [1, 4, 2, 3, 5];
+    const labels = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+    const barWidth = 40;
+    const spacing = 60;
+
+    data.forEach((val, i) => {
+      ctx.fillStyle = currentRole === "vendor" ? "#9b59b6" : "#6ab04c";
+      ctx.fillRect(i * spacing + 30, canvas.height - val - 20, barWidth, val);
+      ctx.fillStyle = "#bbb";
+      ctx.fillText(labels[i], i * spacing + 35, canvas.height - 5);
+    });
+  }
+
+  drawChart();
+</script>
+
+</body>
+</html>
+
