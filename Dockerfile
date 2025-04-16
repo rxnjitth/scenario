@@ -1,4 +1,3 @@
-
 FROM tomcat:9.0-jdk17
 
 # Step 2: Clean up default apps that come with Tomcat
