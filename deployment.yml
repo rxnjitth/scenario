@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scenario-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scenario-deploy
+  template:
+    metadata:
+      labels:
+        app: scenario-deploy
+    spec:
+      containers:
+        - name: scenario-k8
+          image: rxnjitth/scenario:latest
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scenario-lb
+spec:
+  selector:
+    app: scenario-lb
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer
+
