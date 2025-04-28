@@ -24,7 +24,7 @@ metadata:
   name: scenario-lb
 spec:
   selector:
-    app: scenario-lb
+    app: scenario-deploy
   ports:
     - protocol: TCP
       port: 8080
